@@ -1,0 +1,496 @@
+#include <LiquidCrystal.h> //incluir biblioteca display
+#include <DS1307.h> //incluir RTC relogio
+#include <OneWire.h> //temperatura
+#include <DallasTemperature.h> //temperatura
+#include <SPI.h>
+#include <WiFi.h>
+#include <SoftwareSerial.h>
+
+WiFiServer server(80);
+
+char ssid[] = "Johnny_AP";
+char pass[] = "";
+
+#define EspSerial Serial1
+
+#define ESP8266_BAUD 115200
+
+
+String readString;
+
+
+
+//DEFINIÇOES TERMOSTATO
+OneWire pino(6); //Seta pino 6 para termostato
+DallasTemperature barramento(&pino);
+DeviceAddress sensor;
+
+
+//DEFINIÇOES LCD
+// Iniciar LCD
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+//DEFINIÇOES RTC
+//Define portas 20,21 (SDA,SCL) ARD. Mega
+DS1307 rtc(20, 21); //rtc para mega "scl" "sda"
+
+//variaveis dos estados de ativaçao
+int unsigned rele1 = 0;
+int unsigned rele2 = 0;
+int unsigned rele3 = 0;
+int unsigned rele4 = 0;
+int unsigned rele5 = 0;
+int unsigned rele6 = 0;
+int unsigned rele7 = 0;
+int unsigned rele8 = 0;
+int unsigned rele9 = 0;
+int unsigned rele10 = 0;
+int unsigned rele11 = 0;
+int unsigned rele12 = 0;
+int unsigned rele13 = 0;
+int unsigned rele14 = 0;
+int unsigned rele15 = 0;
+int unsigned rele16 = 0;
+
+// Valores boleanos
+boolean ligado1 = true;
+boolean ligado2 = true;
+boolean ligado3 = true;
+boolean ligado4 = true;
+boolean ligado5 = true;
+boolean ligado6 = true;
+boolean ligado7 = true;
+boolean ligado8 = true;
+boolean ligado9 = true;
+boolean ligado10 = true;
+boolean ligado11 = true;
+boolean ligado12 = true;
+boolean ligado13 = true;
+boolean ligado14 = true;
+boolean ligado15 = true;
+boolean ligado16 = true;
+
+//dando nome as portas 38 a 53
+int porta_rele1 = 38; 
+int porta_rele2 = 39;
+int porta_rele3 = 40;
+int porta_rele4 = 41;
+int porta_rele5 = 42;
+int porta_rele6 = 43;
+int porta_rele7 = 44;
+int porta_rele8 = 45;
+int porta_rele9 = 46; 
+int porta_rele10 = 47;
+int porta_rele11 = 48;
+int porta_rele12 = 49;
+int porta_rele13 = 50;
+int porta_rele14 = 51;
+int porta_rele15 = 52;
+int porta_rele16 = 53;
+
+void setup() {
+  
+  //define portas para ativar os reles
+  pinMode(porta_rele1, OUTPUT);
+  pinMode(porta_rele2, OUTPUT);
+  pinMode(porta_rele3, OUTPUT);
+  pinMode(porta_rele4, OUTPUT);
+  pinMode(porta_rele5, OUTPUT);
+  pinMode(porta_rele6, OUTPUT);
+  pinMode(porta_rele7, OUTPUT);
+  pinMode(porta_rele8, OUTPUT);
+  pinMode(porta_rele9, OUTPUT);
+  pinMode(porta_rele10, OUTPUT);
+  pinMode(porta_rele11, OUTPUT);
+  pinMode(porta_rele12, OUTPUT);
+  pinMode(porta_rele13, OUTPUT);
+  pinMode(porta_rele14, OUTPUT);
+  pinMode(porta_rele15, OUTPUT);
+  pinMode(porta_rele16, OUTPUT);
+
+  //Desligar reles quando iniciar o arduino
+  digitalWrite(porta_rele1, HIGH);
+  digitalWrite(porta_rele2, HIGH);
+  digitalWrite(porta_rele3, HIGH);
+  digitalWrite(porta_rele4, HIGH);
+  digitalWrite(porta_rele5, HIGH);
+  digitalWrite(porta_rele6, HIGH);
+  digitalWrite(porta_rele7, HIGH);
+  digitalWrite(porta_rele8, HIGH);
+  digitalWrite(porta_rele9, HIGH);
+  digitalWrite(porta_rele10, HIGH);
+  digitalWrite(porta_rele11, HIGH);
+  digitalWrite(porta_rele12, HIGH);
+  digitalWrite(porta_rele13, HIGH);
+  digitalWrite(porta_rele14, HIGH);
+  digitalWrite(porta_rele15, HIGH);
+  digitalWrite(porta_rele16, HIGH);
+
+}
+
+void loop()
+{ 
+  WiFiClient client = server.available();
+  if (client) {
+    while (client.connected())
+    {
+      if (client.available())
+      {
+        char c = client.read();
+        if (readString.length() < 100) {
+          readString += c;
+        }
+        if (c == 'n')
+        {
+          //Controle do rele1
+          Serial.println(readString);
+          //Liga o Rele 1
+          if (readString.indexOf("?ligar") > 0)
+          {
+            rele1 = 1;
+            Serial.println("Rele 1 Ligado");
+            ligado1 = false;
+          }
+          else
+          {
+            //Desliga o Rele 1
+            if (readString.indexOf("?desligar") > 0)
+            {
+              rele1 = 0;;
+              Serial.println("Rele 1 Desligado");
+              ligado1 = true;
+            }
+          }
+
+          //Controle do rele2
+          Serial.println(readString);
+          //Liga o Rele 2
+          if (readString.indexOf("?2_ligar") > 0)
+          {
+            rele2 = 1;
+            Serial.println("Rele 2 Ligado");
+            ligado2 = false;
+          }
+          else
+          {
+            //Desliga o Rele 2
+            if (readString.indexOf("?2_desligar") > 0)
+            {
+              rele2 = 0;
+              Serial.println("Rele 2 Desligado");
+              ligado2 = true;
+            }
+          }
+          //Controle do rele3
+          Serial.println(readString);
+          //Liga o Rele 3
+          if (readString.indexOf("?3_ligar") > 0)
+          {
+            rele3 = 1;
+            Serial.println("Rele 1 Ligado");
+            ligado3 = false;
+          }
+          else
+          {
+            //Desliga o Rele 3
+            if (readString.indexOf("?3_desligar") > 0)
+            {
+              rele3 = 0;
+              Serial.println("Rele 1 Desligado");
+              ligado3 = true;
+            }
+          }
+
+          //Controle do rele4
+          Serial.println(readString);
+          //Liga o Rele 4
+          if (readString.indexOf("?4_ligar") > 0)
+          {
+            rele4 = 1;
+            Serial.println("Rele 2 Ligado");
+            ligado4 = false;
+          }
+          else
+          {
+            //Desliga o Rele 4
+            if (readString.indexOf("?4_desligar") > 0)
+            {
+              rele4 = 0;
+              Serial.println("Rele 2 Desligado");
+              ligado4 = true;
+            }
+          }
+          //Controle do rele5
+          Serial.println(readString);
+          //Liga o Rele 5
+          if (readString.indexOf("?5_ligar") > 0)
+          {
+            rele5 = 1;
+            Serial.println("Rele 1 Ligado");
+            ligado5 = false;
+          }
+          else
+          {
+            //Desliga o Rele 5
+            if (readString.indexOf("?5_desligar") > 0)
+            {
+              rele5 = 0;
+              Serial.println("Rele 1 Desligado");
+              ligado5 = true;
+            }
+          }
+
+          //Controle do rele6
+          Serial.println(readString);
+          //Liga o Rele 6
+          if (readString.indexOf("?6_ligar") > 0)
+          {
+            rele6 = 1;
+            Serial.println("Rele 2 Ligado");
+            ligado6 = false;
+          }
+          else
+          {
+            //Desliga o Rele 6
+            if (readString.indexOf("?6_desligar") > 0)
+            {
+              rele6 = 0;
+              Serial.println("Rele 2 Desligado");
+              ligado6 = true;
+            }
+          }
+          //Controle do rele7
+          Serial.println(readString);
+          //Liga o Rele 7
+          if (readString.indexOf("?7_ligar") > 0)
+          {
+            rele7 = 1;
+            Serial.println("Rele 1 Ligado");
+            ligado7 = false;
+          }
+          else
+          {
+            //Desliga o Rele 7
+            if (readString.indexOf("?7_desligar") > 0)
+            {
+              rele7 = 0;
+              Serial.println("Rele 1 Desligado");
+              ligado7 = true;
+            }
+          }
+
+          //Controle do rele8
+          Serial.println(readString);
+          //Liga o Rele 8
+          if (readString.indexOf("?8_ligar") > 0)
+          {
+            rele8 = 1;
+            Serial.println("Rele 2 Ligado");
+            ligado8 = false;
+          }
+          else
+          {
+            //Desliga o Rele 8
+            if (readString.indexOf("?8_desligar") > 0)
+            {
+              rele8 = 0;
+              Serial.println("Rele 2 Desligado");
+              ligado8 = true;
+            }
+          }
+          
+          //Controle do rele9
+          Serial.println(readString);
+          //Liga o Rele 9
+          if (readString.indexOf("?9_ligar") > 0)
+          {
+            rele9 = 1;
+            Serial.println("Rele 1 Ligado");
+            ligado9 = false;
+          }
+          else
+          {
+            //Desliga o Rele 9
+            if (readString.indexOf("?9_desligar") > 0)
+            {
+              rele9 = 0;
+              Serial.println("Rele 1 Desligado");
+              ligado9 = true;
+            }
+          }
+
+          //Controle do rele10
+          Serial.println(readString);
+          //Liga o Rele 10
+          if (readString.indexOf("?10_ligar") > 0)
+          {
+            rele10 = 1;
+            Serial.println("Rele 2 Ligado");
+            ligado10 = false;
+          }
+          else
+          {
+            //Desliga o Rele 10
+            if (readString.indexOf("?10_desligar") > 0)
+            {
+              rele10 = 0;
+              Serial.println("Rele 2 Desligado");
+              ligado10 = true;
+            }
+          }
+          //Controle do rele11
+          Serial.println(readString);
+          //Liga o Rele 11
+          if (readString.indexOf("?11_ligar") > 0)
+          {
+            rele11 = 1;
+            Serial.println("Rele 1 Ligado");
+            ligado11 = false;
+          }
+          else
+          {
+            //Desliga o Rele 11
+            if (readString.indexOf("?11_desligar") > 0)
+            {
+              rele11 = 0;
+              Serial.println("Rele 1 Desligado");
+              ligado11 = true;
+            }
+          }
+
+          //Controle do rele12
+          Serial.println(readString);
+          //Liga o Rele 12
+          if (readString.indexOf("?12_ligar") > 0)
+          {
+            rele12 = 1;
+            Serial.println("Rele 2 Ligado");
+            ligado12 = false;
+          }
+          else
+          {
+            //Desliga o Rele 12
+            if (readString.indexOf("?12_desligar") > 0)
+            {
+              rele12 = 0;
+              Serial.println("Rele 2 Desligado");
+              ligado12 = true;
+            }
+          }
+          //Controle do rele13
+          Serial.println(readString);
+          //Liga o Rele 13
+          if (readString.indexOf("?13_ligar") > 0)
+          {
+            rele13 = 1;
+            Serial.println("Rele 1 Ligado");
+            ligado13 = false;
+          }
+          else
+          {
+            //Desliga o Rele 13
+            if (readString.indexOf("?13_desligar") > 0)
+            {
+              rele13 = 0;
+              Serial.println("Rele 1 Desligado");
+              ligado13 = true;
+            }
+          }
+
+          //Controle do rele14
+          Serial.println(readString);
+          //Liga o Rele 14
+          if (readString.indexOf("?14_ligar") > 0)
+          {
+            rele14 = 1;
+            Serial.println("Rele 2 Ligado");
+            ligado14 = false;
+          }
+          else
+          {
+            //Desliga o Rele 14
+            if (readString.indexOf("?14_desligar") > 0)
+            {
+              rele14 = 0;
+              Serial.println("Rele 2 Desligado");
+              ligado14 = true;
+            }
+          }
+          //Controle do rele15
+          Serial.println(readString);
+          //Liga o Rele 15
+          if (readString.indexOf("?15_ligar") > 0)
+          {
+            rele15 = 1;
+            Serial.println("Rele 1 Ligado");
+            ligado15 = false;
+          }
+          else
+          {
+            //Desliga o Rele 15
+            if (readString.indexOf("?15_desligar") > 0)
+            {
+              rele15 = 0;
+              Serial.println("Rele 1 Desligado");
+              ligado15 = true;
+            }
+          }
+
+          //Controle do rele16
+          Serial.println(readString);
+          //Liga o Rele 16
+          if (readString.indexOf("?16_ligar") > 0)
+          {
+            rele16 = 1;
+            Serial.println("Rele 2 Ligado");
+            ligado16 = false;
+          }
+          else
+          {
+            //Desliga o Rele 16
+            if (readString.indexOf("?16_desligar") > 0)
+            {
+              rele16 = 0;
+              Serial.println("Rele 2 Desligado");
+              ligado16 = true;
+            }
+          }
+          readString = "";
+
+          client.println("HTTP/1.1 200 OK");
+          client.println("Content-Type: text/html");
+          client.println();
+          client.println("<html>");
+          client.println("<head>");
+          client.println("<title>FILIPEFLOP - Automacao Residencial</title>");
+          client.println("<meta http-equiv='Content-Type' content='text/html; charset=ISO-8859-1'>");
+          client.println("<meta name='viewport' content='width=720, initial-scale=0.5' />");
+          client.println("<link rel='stylesheet' type='text/css' href='http://img.filipeflop.com/files/download/automacao/automacao_residencial.css' />");
+          client.println("<script type='text/javascript' src='http://img.filipeflop.com/files/download/automacao/automacao_residencial.js'></script>");
+          client.println("</head>");
+          client.println("<body>");
+          client.println("<div id='wrapper'><img alt='FILIPEFLOP' src='http://img.filipeflop.com/files/download/automacao/logoFF.jpg'/><br/>");
+          client.println("<div id='div1'>Rele 1</div>");
+          client.println("<div id='div2'>Rele 2</div>");
+          client.print("<div id='rele'></div><div id='estado' style='visibility: hidden;'>");
+          client.print("ligado");
+          client.println("</div>");
+          client.println("<div id='botao'></div>");
+          client.println("<div id='botao_2'></div>");
+          client.print("<div id='rele_2'></div><div id='estado_2' style='visibility: hidden;'>");
+          client.print("ligado_2");
+          client.println("</div>");
+          client.println("</div>");
+          client.println("<script>AlteraRele1()</script>");
+          client.println("<script>AlteraRele2()</script>");
+          client.println("</div>");
+          client.println("</body>");
+          client.println("</head>");
+
+          delay(1);
+          client.stop();
+        }
+      }
+    }
+  }
+}
